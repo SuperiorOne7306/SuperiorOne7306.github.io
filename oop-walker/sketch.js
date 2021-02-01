@@ -1,20 +1,23 @@
 // OOP Walker
 
-let amy;
-let noah;
+let theWalkers = [];
+let colorOptions = ["green", "blue", "red", "yellow", "purple", "orange", "white"]
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  amy = new Walker(width/2, height/2, "purple");
-  noah = new Walker(100, 100, "green");
   background("black");
 }
 
 function draw() {
-  amy.move();
-  noah.move();
-  amy.display();
-  noah.display();
+  for (let i=0; i<theWalkers.length; i++) {
+    theWalkers[i].move();
+    theWalkers[i].display();
+  }
+}
+
+function mousePressed() {
+  let someWalker = new Walker(mouseX, mouseY, random(colorOptions));
+  theWalkers.push(someWalker);
 }
 
 class Walker {
