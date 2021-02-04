@@ -8,6 +8,7 @@
 let snakeFacing = "down";
 let snakeX = 15;
 let snakeY = 15;
+let generalTime = millis();
 
 function setup() {
   createCanvas(700, 700);
@@ -27,6 +28,7 @@ function draw() {
   snakeInGrid();
 
   displayGrid();
+  console.log(generalTime);
 }
 
 function mousePressed() {
