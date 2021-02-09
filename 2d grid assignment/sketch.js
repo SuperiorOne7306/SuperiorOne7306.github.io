@@ -7,9 +7,9 @@ let rows;
 let cols;
 let cellWidth;
 let cellHeight;
-let snakeFacing = "down";
-let snakeX = 15;
-let snakeY = 0;
+let cubeFacing = "down";
+let cubeX = 15;
+let cubeY = 0;
 let moved = false;
 let lastMove = 0;
 let moveSpeed = 200;
@@ -37,12 +37,14 @@ function setup() {
 
 function draw() {
   background(220);
+  //during game
   if (isAlive) {
-    moveSnake();
+    moveCube();
 
     displayGrid();
   }
 
+  //menu
   else {
     showScore();
     startButton();
@@ -51,19 +53,19 @@ function draw() {
 }
 
 function keyPressed() {
+  //wasd controls
   if (key === "w") {
-    snakeFacing = "up";
+    cubeFacing = "up";
   }
   else if (key === "a") {
-    snakeFacing = "left";
+    cubeFacing = "left";
   }
   else if (key === "s") {
-    snakeFacing = "down";
+    cubeFacing = "down";
   }
   else if (key === "d") {
-    snakeFacing = "right";
+    cubeFacing = "right";
   }
-  console.log(snakeFacing);
 }
 
 function displayGrid() {
@@ -74,7 +76,7 @@ function displayGrid() {
       if (grid[y][x] === 0) {
         fill("white");
       }
-      //snake head
+      //cube
       else if (grid[y][x] === 1) {
         fill("blue");
       }
@@ -99,39 +101,41 @@ function createEmptyGrid(cols, rows) {
   return emptyGrid;
 }
 
-function showSnake() {
-  grid[snakeY][snakeX] = 1;
+function showCube() {
+  //display cube in grid
+  grid[cubeY][cubeX] = 1;
 }
 
-function moveSnake() {
+function moveCube() {
+  //detect if its time to move
   if (!moved) {
     if (millis() >= lastMove + moveSpeed) {
       moved = true;
     }
   }
   if (moved) {
-    lastPosition = [snakeY, snakeX];
-    if (snakeFacing === "down") {
-      snakeY += 1;
+    lastPosition = [cubeY, cubeX];
+    if (cubeFacing === "down") {
+      cubeY += 1;
     }
-    else if (snakeFacing === "up") {
-      snakeY -= 1;
+    else if (cubeFacing === "up") {
+      cubeY -= 1;
     }
-    else if (snakeFacing === "left") {
-      snakeX -= 1;
+    else if (cubeFacing === "left") {
+      cubeX -= 1;
     }
-    else if (snakeFacing === "right") {
-      snakeX += 1;
+    else if (cubeFacing === "right") {
+      cubeX += 1;
     }
     grid[lastPosition[0]][lastPosition[1]] = 0;
     gameLost();
     if (isAlive) {
-      if (grid[snakeY][snakeX] === 9) {
+      if (grid[cubeY][cubeX] === 9) {
         moveSpeed -= moveSpeed / 10;
         pointCounter += 1;
         spawnFood();
       }
-      showSnake();
+      showCube();
       lastMove = millis();
       moved = false;
     }
@@ -140,7 +144,7 @@ function moveSnake() {
 }
 
 function gameLost() {
-  if (snakeX < 0 || snakeX >= 30 || snakeY < 0 || snakeY >= 30) {
+  if (cubeX < 0 || cubeX >= 30 || cubeY < 0 || cubeY >= 30) {
     isAlive = false;
   }
 }
@@ -151,7 +155,7 @@ function spawnFood() {
 
 
 function showScore() {
-  //show the time they got only if they played
+  //show the score they got
   if (!isAlive) {
     fill("black");
     textSize(25);
@@ -175,9 +179,9 @@ function mousePressed() {
       mouseY > height/1.5 - buttonHeight/2 && mouseY < height/1.5 + buttonHeight/2) {
     if (!isAlive) {
       isAlive = true; 
-      snakeX = 15;
-      snakeY = 0;
-      snakeFacing = "down";  
+      cubeX = 15;
+      cubeY = 0;
+      cubeFacing = "down";  
       pointCounter = 0;
       moveSpeed = 200; 
     }
