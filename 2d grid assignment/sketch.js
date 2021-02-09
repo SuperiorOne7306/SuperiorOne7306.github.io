@@ -1,19 +1,23 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// 2D Grid Assignment (Game Name: Hungry Cube)
+// Michael Blushke
+// Feb 8, 2021
 
+let grid;
+let rows;
+let cols;
+let cellWidth;
+let cellHeight;
 let snakeFacing = "down";
 let snakeX = 15;
-let snakeY = 15;
+let snakeY = 0;
 let moved = false;
 let lastMove = 0;
-let moveTime = 200;
-let theSnake = [];
-let snakeCopy;
-let snakeCopy2;
+let moveSpeed = 200;
+let lastPosition;
+let isAlive = false;
+let pointCounter = 0;
+let buttonWidth;
+let buttonHeight;
 
 function setup() {
   createCanvas(700, 700);
@@ -25,27 +29,24 @@ function setup() {
   cellWidth = width / cols;
   cellHeight = height / rows;
 
-  theSnake.push[snakeY, snakeX, snakeFacing]
+  spawnFood();
+  textAlign(CENTER, CENTER);
+  buttonWidth = width/5;
+  buttonHeight = height/10;
 }
 
 function draw() {
   background(220);
-  
-  moveSnake();
-  snakeInGrid();
+  if (isAlive) {
+    moveSnake();
 
-  displayGrid();
-}
-
-function mousePressed() {
-  let x = Math.floor(mouseX / cellWidth);
-  let y = Math.floor(mouseY / cellHeight);
-
-  if (grid[y][x] === 1) {
-    grid[y][x] = 0;
+    displayGrid();
   }
-  else if (grid[y][x] === 0) {
-    grid[y][x] = 1;
+
+  else {
+    showScore();
+    startButton();
+    showInstructions();
   }
 }
 
@@ -66,6 +67,7 @@ function keyPressed() {
 }
 
 function displayGrid() {
+  rectMode(CORNER);
   for (let y=0; y<rows; y++) {
     for (let x=0; x<cols; x++) {
       //empty
@@ -75,10 +77,6 @@ function displayGrid() {
       //snake head
       else if (grid[y][x] === 1) {
         fill("blue");
-      }
-      //snake body
-      else if (grid[y][x] === 2) {
-        fill("green");
       }
       //food
       else if (grid[y][x] === 9) {
@@ -101,27 +99,18 @@ function createEmptyGrid(cols, rows) {
   return emptyGrid;
 }
 
-function snakeInGrid() {
-  theSnake[0] = snakeCopy
-  grid[theSnake[0][0]][theSnake[0][1]] = 1;
-  for (let i=1; i<theSnake.length-1; i++) {
-    snakeCopy.push(theSnake[i]);
-    theSnake[i] = snakeCopy[0];
-    grid[theSnake]
-    snakeCopy.splice(0, 1);
-  }
-  grid[oldY][oldX] = 2;
-  }
+function showSnake() {
+  grid[snakeY][snakeX] = 1;
+}
 
 function moveSnake() {
   if (!moved) {
-    if (millis() >= lastMove + moveTime) {
-      moved = true
+    if (millis() >= lastMove + moveSpeed) {
+      moved = true;
     }
   }
   if (moved) {
-    oldX = snakeX;
-    oldY = snakeY;
+    lastPosition = [snakeY, snakeX];
     if (snakeFacing === "down") {
       snakeY += 1;
     }
@@ -134,7 +123,68 @@ function moveSnake() {
     else if (snakeFacing === "right") {
       snakeX += 1;
     }
-    lastMove = millis();
-    moved = false;
+    grid[lastPosition[0]][lastPosition[1]] = 0;
+    gameLost();
+    if (isAlive) {
+      if (grid[snakeY][snakeX] === 9) {
+        moveSpeed -= moveSpeed / 10;
+        pointCounter += 1;
+        spawnFood();
+      }
+      showSnake();
+      lastMove = millis();
+      moved = false;
+    }
+    
   }
+}
+
+function gameLost() {
+  if (snakeX < 0 || snakeX >= 30 || snakeY < 0 || snakeY >= 30) {
+    isAlive = false;
+  }
+}
+
+function spawnFood() {
+  grid[Math.floor(random(1,29))][Math.floor(random(1,29))] = 9;
+}
+
+
+function showScore() {
+  //show the time they got only if they played
+  if (!isAlive) {
+    fill("black");
+    textSize(25);
+    text("Your Score: " + pointCounter, width/2, height/3);
+  }
+}
+
+function startButton() {
+  //display start button
+  rectMode(CENTER);
+  fill("white");
+  rect(width/2, height/1.5, buttonWidth, buttonHeight);
+  textSize(25);
+  fill("black");
+  text("START", width/2, height/1.5);
+}
+  
+function mousePressed() {
+  //check if start button is pressed
+  if (mouseX > width/2 - buttonWidth/2 && mouseX < width/2 + buttonWidth/2 && 
+      mouseY > height/1.5 - buttonHeight/2 && mouseY < height/1.5 + buttonHeight/2) {
+    if (!isAlive) {
+      isAlive = true; 
+      snakeX = 15;
+      snakeY = 0;
+      snakeFacing = "down";  
+      pointCounter = 0;
+      moveSpeed = 200; 
+    }
+  }
+}
+  
+function showInstructions() {
+  textSize(15);
+  text("Use WASD to move. Eat as much food as you can without hitting the boundaries!", width/2, height/1.15);
 }
