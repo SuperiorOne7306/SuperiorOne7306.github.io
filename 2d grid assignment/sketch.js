@@ -66,6 +66,7 @@ function keyPressed() {
   else if (key === "d") {
     cubeFacing = "right";
   }
+  console.log(cubeFacing);
 }
 
 function displayGrid() {
